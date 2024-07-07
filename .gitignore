@@ -1,0 +1,7 @@
+*.html
+*.txt
+*.xml
+*.swp
+*~
+/lib
+
