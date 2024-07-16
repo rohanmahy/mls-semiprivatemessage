@@ -88,11 +88,13 @@ The snippet below shows the syntax and encryption and decryption construction of
 
 ~~~ tls
 struct {
+  opaque sender_data_key<V>;
+  opaque sender_data_nonce<V>;
   opaque key<V>;
   opaque nonce<V>;
-} MessageKeyAndNonce;
+} PerMessageKeysAndNonces;
 
-MessageKeyAndNonce key_and_nonce;
+PerMessageKeysAndNonces key_and_nonce;
 
 encrypted_key_and_nonce = EncryptWithLabel(
   external_receiver_pulic_key,
