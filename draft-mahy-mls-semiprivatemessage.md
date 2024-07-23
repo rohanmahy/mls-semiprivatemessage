@@ -97,7 +97,7 @@ struct {
 PerMessageKeysAndNonces key_and_nonce;
 
 encrypted_key_and_nonce = EncryptWithLabel(
-  external_receiver_pulic_key,
+  external_receiver_public_key,
   "SemiPrivateMessageReceiver",
   private_message, key_and_nonce)
 
