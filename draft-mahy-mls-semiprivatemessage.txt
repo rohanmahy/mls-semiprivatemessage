@@ -2,10 +2,10 @@
 
 
 
-MLS WG                                                           R. Mahy
+Messaging Layer Security                                         R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                              16 July 2024
-Expires: 17 January 2025
+Intended status: Informational                             1 August 2024
+Expires: 2 February 2025
 
 
   Semi-Private Messages in the Messaging Layer Security (MLS) Protocol
@@ -23,15 +23,15 @@ About This Document
    This note is to be removed before publishing as an RFC.
 
    The latest revision of this draft can be found at
-   https://rohanmahy.github.io/mls-semiprivate/draft-mahy-
+   https://rohanmahy.github.io/mls-semiprivatemessage/draft-mahy-mls-
    semiprivatemessage.html.  Status information for this document may be
    found at https://datatracker.ietf.org/doc/draft-mahy-mls-
    semiprivatemessage/.
 
-   Discussion of this document takes place on the MLS WG Working Group
-   mailing list (mailto:mls@ietf.org), which is archived at
-   https://mailarchive.ietf.org/arch/browse/mls/.  Subscribe at
-   https://www.ietf.org/mailman/listinfo/mls/.
+   Discussion of this document takes place on the Messaging Layer
+   Security Working Group mailing list (mailto:mls@ietf.org), which is
+   archived at https://mailarchive.ietf.org/arch/browse/mls/.  Subscribe
+   at https://www.ietf.org/mailman/listinfo/mls/.
 
    Source for this draft and an issue tracker can be found at
    https://github.com/rohanmahy/mls-semiprivatemessage.
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 January 2025.
+   This Internet-Draft will expire on 2 February 2025.
 
 Copyright Notice
 
@@ -126,12 +126,12 @@ Table of Contents
    of the wire format in a group (and in the Capabilities of LeafNodes).
    SemiPrivateMessage substantially reuses the construction of
    PrivateMessage, but like a Welcome message also contains information
-   (key_and_nonce) necessary to decrypt the ciphertext and
-   encrypted_sender_data, encrypted once for each external receiver in
-   the external_receivers extension.
+   (keys_and_nonces) necessary to decrypt the SemiPrivateMessage
+   struct's ciphertext and encrypted_sender_data, encrypted once for
+   each external receiver in the external_receivers extension.
 
    The snippet below shows the syntax and encryption and decryption
-   construction of key_and_nonce into encrypted_key_and_nonce
+   construction of keys_and_nonces into encrypted_keys_and_nonces
 
    struct {
      opaque sender_data_key<V>;
@@ -140,41 +140,48 @@ Table of Contents
      opaque nonce<V>;
    } PerMessageKeysAndNonces;
 
-   PerMessageKeysAndNonces key_and_nonce;
+   PerMessageKeysAndNonces keys_and_nonces;
 
-   encrypted_key_and_nonce = EncryptWithLabel(
-     external_receiver_pulic_key,
+   encrypted_keys_and_nonces = EncryptWithLabel(
+     external_receiver_public_key,
      "SemiPrivateMessageReceiver",
-     private_message, key_and_nonce)
+     SemiPrivateMessage.ciphertext,   /* context */
+     keys_and_nonces)
 
-   key_and_nonce = DecryptWithLabel(
+   keys_and_nonces = DecryptWithLabel(
      external_receiver_private_key,
      "SemiPrivateMessageReceiver",
-     private_message,
-     encrypted_key_and_nonce.kem_output,
-     encrypted_key_and_nonce.ciphertext)
+     SemiPrivateMessage.ciphertext,  /* context */
+     encrypted_keys_and_nonces.kem_output,
+     encrypted_keys_and_nonces.ciphertext)
 
    The KeyForExternalReceiver structure contains a hash of the
-   ExternalReceiver as a reference and the encrypted_key_and_nonce.
+   ExternalReceiver as a reference and the encrypted_keys_and_nonces.
 
    /* Using the hash function of the group ciphersuite */
    ExternalReceiverRef = hash(ExternalReceiver)
 
    struct {
      ExternalReceiverRef external_receiver_ref;
-     HPKECiphertext encrypted_key_and_nonce;
+     HPKECiphertext encrypted_keys_and_nonces;
    } KeyForExternalReceiver;
 
-   The SemiPrivateMessage and SemiPrivateContentAAD structs mirror the
-   PrivateMessage and PrivateContentAAD structs and add the
-   keys_for_external_receivers list.  The SemiPrivateMessageContent
-   struct is the same as PrivateMessageContent except for the addition
-   of keys_for_external_receivers, and that application messages are not
+   The SemiPrivateMessage struct mirrors the PrivateMessage struct and
+   adds the keys_for_external_receivers list.  The SemiPrivateContentAAD
+   struct mirrors the PrivateContentAAD struct.  It likewise adds the
+   keys_for_external_receivers list, and also adds a hash of the
+   FramedContentTBS struct to insure that the content encrypted to an
+   external receiver is that same as that provided to members.
+
+   The SemiPrivateMessageContent struct is the same as
+   PrivateMessageContent except for the addition of
+   keys_for_external_receivers, and that application messages are not
    included.
 
    Encryption of the ciphertext and encrypted_sender_data proceed in the
-   same way for SemiPrivateMessage as for PrivateMessage.  Finally, the
-   SemiPrivateMessage is wrapped in an ExtensionContent struct.
+   same way for SemiPrivateMessage as for PrivateMessage.  Finally, as a
+   safe wire format extension, the SemiPrivateMessage is wrapped in an
+   ExtensionContent struct.
 
    struct {
        opaque group_id<V>;
@@ -204,6 +211,7 @@ Table of Contents
        ContentType content_type;
        opaque authenticated_data<V>;
        KeyForExternalReceiver keys_for_external_receivers<V>;
+       opaque framed_content_tbs_hash<V>;
    } SemiPrivateContentAAD;
 
    /* IANA-registered value for semi_private_message */
