@@ -85,7 +85,8 @@ necessary to decrypt the `SemiPrivateMessage` struct's `ciphertext` and
 `encrypted_sender_data`, encrypted once for each external receiver in the
 `external_receivers` extension.
 
-The snippet below shows the syntax and encryption and decryption construction of `keys_and_nonces` into `encrypted_keys_and_nonces`
+The snippet below shows the syntax and encryption and decryption
+construction of `keys_and_nonces` into `encrypted_keys_and_nonces`
 
 ~~~ tls
 struct {
@@ -124,16 +125,21 @@ struct {
 } KeyForExternalReceiver;
 ~~~
 
-The `SemiPrivateMessage` and `SemiPrivateContentAAD` structs mirror
-the `PrivateMessage` and `PrivateContentAAD` structs and add the
-`keys_for_external_receivers` list. The `SemiPrivateMessageContent`
-struct is the same as `PrivateMessageContent` except for the addition
-of `keys_for_external_receivers`, and that application messages are
+The `SemiPrivateMessage` struct mirrors the `PrivateMessage` struct and adds
+the `keys_for_external_receivers` list. The `SemiPrivateContentAAD` struct
+mirrors the `PrivateContentAAD` struct. It likewise adds the
+`keys_for_external_receivers` list, and also adds a hash of the
+`FramedContentTBS` struct to insure that the content encrypted to an
+external receiver is that same as that provided to members.
+
+The `SemiPrivateMessageContent` struct is the same as
+`PrivateMessageContent` except for the addition of
+`keys_for_external_receivers`, and that application messages are
 not included.
 
 Encryption of the `ciphertext` and `encrypted_sender_data` proceed in the
-same way for `SemiPrivateMessage` as for `PrivateMessage`. Finally, the
-`SemiPrivateMessage` is wrapped in an `ExtensionContent` struct.
+same way for `SemiPrivateMessage` as for `PrivateMessage`. Finally, as a safe wire format extension, the `SemiPrivateMessage` is wrapped in an
+`ExtensionContent` struct.
 
 ~~~ tls
 struct {
@@ -164,6 +170,7 @@ struct {
     ContentType content_type;
     opaque authenticated_data<V>;
     KeyForExternalReceiver keys_for_external_receivers<V>;
+    opaque framed_content_tbs_hash<V>;
 } SemiPrivateContentAAD;
 
 /* IANA-registered value for semi_private_message */
