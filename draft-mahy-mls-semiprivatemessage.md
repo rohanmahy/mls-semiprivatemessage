@@ -9,17 +9,17 @@ number:
 date:
 consensus: true
 v: 3
-area: SEC
-workgroup: MLS WG
+area: "Security"
+workgroup: "Messaging Layer Security"
 keyword:
  - SemiPrivateMessage
 venue:
-  group: MLS WG
-  type: Working Group
+  group: "Messaging Layer Security"
+  type: "Working Group"
   mail: "mls@ietf.org"
   arch: "https://mailarchive.ietf.org/arch/browse/mls/"
   github: "rohanmahy/mls-semiprivatemessage"
-  latest: "https://rohanmahy.github.io/mls-semiprivate/draft-mahy-semiprivatemessage.html"
+  latest: "https://rohanmahy.github.io/mls-semiprivatemessage/draft-mahy-mls-semiprivatemessage.html"
 
 author:
  -
