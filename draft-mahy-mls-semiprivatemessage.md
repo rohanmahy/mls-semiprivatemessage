@@ -81,8 +81,9 @@ extension type which is carried in the GroupContext to indicate use
 of the wire format in a group (and in the Capabilities of LeafNodes).
 SemiPrivateMessage substantially reuses the construction of PrivateMessage,
 but like a Welcome message also contains information (`keys_and_nonces`)
-necessary to decrypt the `ciphertext` and `encrypted_sender_data`, encrypted
-once for each external receiver in the `external_receivers` extension.
+necessary to decrypt the `SemiPrivateMessage` struct's `ciphertext` and
+`encrypted_sender_data`, encrypted once for each external receiver in the
+`external_receivers` extension.
 
 The snippet below shows the syntax and encryption and decryption construction of `keys_and_nonces` into `encrypted_keys_and_nonces`
 
@@ -99,12 +100,13 @@ PerMessageKeysAndNonces keys_and_nonces;
 encrypted_keys_and_nonces = EncryptWithLabel(
   external_receiver_public_key,
   "SemiPrivateMessageReceiver",
-  private_message, keys_and_nonces)
+  SemiPrivateMessage.ciphertext,   /* context */
+  keys_and_nonces)
 
 keys_and_nonces = DecryptWithLabel(
   external_receiver_private_key,
   "SemiPrivateMessageReceiver",
-  private_message,
+  SemiPrivateMessage.ciphertext,  /* context */
   encrypted_keys_and_nonces.kem_output,
   encrypted_keys_and_nonces.ciphertext)
 ~~~
