@@ -21,3 +21,4 @@ draft-mahy-mls-semiprivatemessage.xml
 package-lock.json
 report.xml
 !requirements.txt
+.DS_Store
