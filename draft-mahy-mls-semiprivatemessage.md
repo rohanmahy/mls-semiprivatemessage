@@ -80,11 +80,11 @@ The `SemiPrivateMessage` wire format Safe Extension also has an
 extension type which is carried in the GroupContext to indicate use
 of the wire format in a group (and in the Capabilities of LeafNodes).
 SemiPrivateMessage substantially reuses the construction of PrivateMessage,
-but like a Welcome message also contains information (`key_and_nonce`)
+but like a Welcome message also contains information (`keys_and_nonces`)
 necessary to decrypt the `ciphertext` and `encrypted_sender_data`, encrypted
 once for each external receiver in the `external_receivers` extension.
 
-The snippet below shows the syntax and encryption and decryption construction of `key_and_nonce` into `encrypted_key_and_nonce`
+The snippet below shows the syntax and encryption and decryption construction of `keys_and_nonces` into `encrypted_keys_and_nonces`
 
 ~~~ tls
 struct {
@@ -94,23 +94,23 @@ struct {
   opaque nonce<V>;
 } PerMessageKeysAndNonces;
 
-PerMessageKeysAndNonces key_and_nonce;
+PerMessageKeysAndNonces keys_and_nonces;
 
-encrypted_key_and_nonce = EncryptWithLabel(
+encrypted_keys_and_nonces = EncryptWithLabel(
   external_receiver_public_key,
   "SemiPrivateMessageReceiver",
-  private_message, key_and_nonce)
+  private_message, keys_and_nonces)
 
-key_and_nonce = DecryptWithLabel(
+keys_and_nonces = DecryptWithLabel(
   external_receiver_private_key,
   "SemiPrivateMessageReceiver",
   private_message,
-  encrypted_key_and_nonce.kem_output,
-  encrypted_key_and_nonce.ciphertext)
+  encrypted_keys_and_nonces.kem_output,
+  encrypted_keys_and_nonces.ciphertext)
 ~~~
 
 The `KeyForExternalReceiver` structure contains a hash of the
-`ExternalReceiver` as a reference and the `encrypted_key_and_nonce`.
+`ExternalReceiver` as a reference and the `encrypted_keys_and_nonces`.
 
 ~~~ tls
 /* Using the hash function of the group ciphersuite */
@@ -118,7 +118,7 @@ ExternalReceiverRef = hash(ExternalReceiver)
 
 struct {
   ExternalReceiverRef external_receiver_ref;
-  HPKECiphertext encrypted_key_and_nonce;
+  HPKECiphertext encrypted_keys_and_nonces;
 } KeyForExternalReceiver;
 ~~~
 
