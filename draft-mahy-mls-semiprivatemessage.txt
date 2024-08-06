@@ -4,8 +4,8 @@
 
 Messaging Layer Security                                         R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                             1 August 2024
-Expires: 2 February 2025
+Intended status: Informational                             6 August 2024
+Expires: 7 February 2025
 
 
   Semi-Private Messages in the Messaging Layer Security (MLS) Protocol
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 February 2025.
+   This Internet-Draft will expire on 7 February 2025.
 
 Copyright Notice
 
@@ -72,11 +72,16 @@ Table of Contents
    1.  Introduction
    2.  Conventions and Definitions
    3.  Syntax and Usage
+     3.1.  Encryption of a SemiPrivateMessage
+     3.2.  Decryption of SemiPrivateMessage as a member
+     3.3.  Decryption of SemiPrivateMessage as an external receiver
    4.  Security Considerations
    5.  IANA Considerations
      5.1.  SemiPrivateMessage Wire Format
      5.2.  External Receivers Extension Type
    6.  Normative References
+   Appendix A.  Change log
+     A.1.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
    Acknowledgments
    Author's Address
 
@@ -109,6 +114,9 @@ Table of Contents
    Safe Extensions framework, defined in Section 2 of
    [I-D.ietf-mls-extensions].
 
+   Whenever a hash function is mentioned, it refers to the hash function
+   defined in the cipher suite in use for the relevant MLS group.
+
 3.  Syntax and Usage
 
    The external_receivers GroupContext extension is used for all members
@@ -122,43 +130,62 @@ Table of Contents
    } ExternalReceiver;
 
    The SemiPrivateMessage wire format Safe Extension also has an
-   extension type which is carried in the GroupContext to indicate use
-   of the wire format in a group (and in the Capabilities of LeafNodes).
+   extension type which is carried in the GroupContext
+   required_capabilities to indicate use of the wire format in a group,
+   and in the Capabilities of LeafNodes)
+
    SemiPrivateMessage substantially reuses the construction of
    PrivateMessage, but like a Welcome message also contains information
-   (keys_and_nonces) necessary to decrypt the SemiPrivateMessage
-   struct's ciphertext and encrypted_sender_data, encrypted once for
-   each external receiver in the external_receivers extension.
+   (key_and_nonces) necessary to identify the sender leaf node and
+   decrypt the SemiPrivateMessage struct's ciphertext.  Note that the
+   encrypted_sender_data cannot be decrypted by an external receiver,
+   but the sender_leaf_index is included with key_and_nonces and is
+   verified in another step. key_and_nonces is encrypted once for each
+   external receiver in the external_receivers extension.
 
-   The snippet below shows the syntax and encryption and decryption
-   construction of keys_and_nonces into encrypted_keys_and_nonces
+3.1.  Encryption of a SemiPrivateMessage
+
+   As with a PrivateMessage, the sending client chooses an unused
+   generation in its own handshake ratchet and derives a key and nonce.
+   It also generates a fresh random four-byte reuse_guard.  The snippet
+   below shows the syntax and encryption and decryption construction of
+   keys_and_nonces into encrypted_keys_and_nonces for each external
+   receiver.
 
    struct {
-     opaque sender_data_key<V>;
-     opaque sender_data_nonce<V>;
      opaque key<V>;
      opaque nonce<V>;
-   } PerMessageKeysAndNonces;
+     opaque reuse_guard[4];
+     uint32 sender_leaf_index;
+   } PerMessageKeyAndNonces;
 
-   PerMessageKeysAndNonces keys_and_nonces;
+   partial_context_hash = hash(sender_leaf_index || nonce)
 
-   encrypted_keys_and_nonces = EncryptWithLabel(
+   struct {
+     opaque group_id<V>;
+     uint64 epoch;
+     opaque partial_context_hash<V>;
+   } SemiPrivateMessageContext;
+
+   PerMessageKeyAndNonces key_and_nonces;
+   SemiPrivateMessageContext semi_private_message_context;
+
+   encrypted_key_and_nonces = EncryptWithLabel(
      external_receiver_public_key,
      "SemiPrivateMessageReceiver",
-     SemiPrivateMessage.ciphertext,   /* context */
+     semi_private_message_context,   /* context */
      keys_and_nonces)
 
-   keys_and_nonces = DecryptWithLabel(
+   key_and_nonces = DecryptWithLabel(
      external_receiver_private_key,
      "SemiPrivateMessageReceiver",
-     SemiPrivateMessage.ciphertext,  /* context */
+     semi_private_message_context,  /* context */
      encrypted_keys_and_nonces.kem_output,
      encrypted_keys_and_nonces.ciphertext)
 
    The KeyForExternalReceiver structure contains a hash of the
-   ExternalReceiver as a reference and the encrypted_keys_and_nonces.
+   ExternalReceiver as a reference and the encrypted_key_and_nonces.
 
-   /* Using the hash function of the group ciphersuite */
    ExternalReceiverRef = hash(ExternalReceiver)
 
    struct {
@@ -166,29 +193,30 @@ Table of Contents
      HPKECiphertext encrypted_keys_and_nonces;
    } KeyForExternalReceiver;
 
-   The SemiPrivateMessage struct mirrors the PrivateMessage struct and
-   adds the keys_for_external_receivers list.  The SemiPrivateContentAAD
-   struct mirrors the PrivateContentAAD struct.  It likewise adds the
-   keys_for_external_receivers list, and also adds a hash of the
-   FramedContentTBS struct to insure that the content encrypted to an
-   external receiver is that same as that provided to members.
+   The SemiPrivateMessage struct extends the PrivateMessage struct,
+   adding the keys_for_external_receivers list, the partial_context_hash
+   needed for its decryption context, and the hash of the
+   FramedContentTBS to insure that the sender cannot encrypt content to
+   the external receivers that is different from the other members,
+   without detection.
+
+   The SemiPrivateContentAAD struct likewise extends the
+   PrivateContentAAD struct, adding the keys_for_external_receivers
+   list, the partial_context_hash and the framed_content_tbs_hash.
 
    The SemiPrivateMessageContent struct is the same as
-   PrivateMessageContent except for the addition of
-   keys_for_external_receivers, and that application messages are not
-   included.
+   PrivateMessageContent except application messages are not included.
 
-   Encryption of the ciphertext and encrypted_sender_data proceed in the
-   same way for SemiPrivateMessage as for PrivateMessage.  Finally, as a
-   safe wire format extension, the SemiPrivateMessage is wrapped in an
-   ExtensionContent struct.
+   framed_content_tbs_hash = hash(FramedContentTBS)
 
    struct {
        opaque group_id<V>;
        uint64 epoch;
        ContentType content_type;
        opaque authenticated_data<V>;
+       opaque partial_context_hash<V>;
        KeyForExternalReceiver keys_for_external_receivers<V>;
+       opaque framed_content_tbs_hash<V>;
        opaque encrypted_sender_data<V>;
        opaque ciphertext<V>;
    } SemiPrivateMessage;
@@ -200,7 +228,6 @@ Table of Contents
            case commit:
              Commit commit;
        };
-       KeyForExternalReceiver keys_for_external_receivers<V>;
        FramedContentAuthData auth;
        opaque padding[length_of_padding];
    } SemiPrivateMessageContent;
@@ -210,6 +237,7 @@ Table of Contents
        uint64 epoch;
        ContentType content_type;
        opaque authenticated_data<V>;
+       opaque partial_context_hash<V>;
        KeyForExternalReceiver keys_for_external_receivers<V>;
        opaque framed_content_tbs_hash<V>;
    } SemiPrivateContentAAD;
@@ -217,6 +245,48 @@ Table of Contents
    /* IANA-registered value for semi_private_message */
    extension_type = TBD2
    SemiPrivateMessage extension_data;
+
+   Encryption of the ciphertext uses the cipher suite's AEAD algorithm
+   using the key, nonce xored with the reuse_guard, the
+   SemiPrivateMessageContent as the plaintext, and the
+   SemiPrivateContentAAD as the authenticated data.
+
+   Encryption of the encrypted_sender_data proceeds in the same way for
+   SemiPrivateMessage as for PrivateMessage.
+
+   Finally, as a safe wire format extension, the SemiPrivateMessage is
+   wrapped in an ExtensionContent struct.
+
+3.2.  Decryption of SemiPrivateMessage as a member
+
+   After stripping off the the ExtensionContent struct, a member
+   receiver derives the sender_data_key and sender_data_nonce and
+   decrypts the encrypted_sender_data, just as for a PrivateMessage.
+
+   The receiver uses the SenderData to lookup the key and nonce for the
+   correct generation in the (non-blank) sender's handshake ratchet.
+   The receiver verifies the partial_context_hash.
+
+   After xoring the nonce with the reuse_guard, the member decrypts the
+   ciphertext.  It verifies the padding consists of the appropriate
+   number of zero bytes, and verifies that the framed_content_tbs_hash
+   is correct.  Finally, it verifies that the signature in the
+   FramedContentAuthData is valid.
+
+3.3.  Decryption of SemiPrivateMessage as an external receiver
+
+   After stripping off the the ExtensionContent struct, an external
+   receiver looks in the keys_for_external_receivers field for its
+   external_receiver_ref.  It calculates the
+   semi_private_message_context and uses HPKE to decrypt the
+   encrypted_keys_and_nonces.  Using the nonce and sender_leaf_node it
+   verifies the partial_context_hash.
+
+   After xoring the nonce with the reuse_guard, the member decrypts the
+   ciphertext.  It verifies the padding consists of the appropriate
+   number of zero bytes, and verifies that the framed_content_tbs_hash
+   is correct.  If the external receiver has a copy of the GroupContext,
+   it verifies that the signature in the FramedContentAuthData is valid.
 
 4.  Security Considerations
 
@@ -280,6 +350,23 @@ Table of Contents
               Omara, E., and K. Cohn-Gordon, "The Messaging Layer
               Security (MLS) Protocol", RFC 9420, DOI 10.17487/RFC9420,
               July 2023, <https://www.rfc-editor.org/rfc/rfc9420>.
+
+Appendix A.  Change log
+
+A.1.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
+
+   *  do not attempt to decrypt SenderData for external receivers;
+      instead also encrypt the sender_leaf_index and reuse_guard.
+
+   *  make the encrypted_key_and_nonces context include the group_id,
+      epoch, and a the hash of the sender_leaf_index and nonce. include
+      that partial_context_hash in the AAD.
+
+   *  add a hash of the FramedContentTBS to the AAD to make sure the
+      content encrypted to the external receiver is the same as that
+      sent to members.
+
+   *  add explicit instructions about encryption and decryption.
 
 Acknowledgments
 
