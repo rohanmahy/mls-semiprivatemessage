@@ -4,8 +4,8 @@
 
 Messaging Layer Security                                         R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                             6 August 2024
-Expires: 7 February 2025
+Intended status: Informational                            25 August 2024
+Expires: 26 February 2025
 
 
   Semi-Private Messages in the Messaging Layer Security (MLS) Protocol
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 February 2025.
+   This Internet-Draft will expire on 26 February 2025.
 
 Copyright Notice
 
