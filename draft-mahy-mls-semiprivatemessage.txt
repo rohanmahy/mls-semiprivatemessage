@@ -4,8 +4,8 @@
 
 Messaging Layer Security                                         R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                            25 August 2024
-Expires: 26 February 2025
+Intended status: Informational                           20 October 2024
+Expires: 23 April 2025
 
 
   Semi-Private Messages in the Messaging Layer Security (MLS) Protocol
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 February 2025.
+   This Internet-Draft will expire on 23 April 2025.
 
 Copyright Notice
 
@@ -81,7 +81,8 @@ Table of Contents
      5.2.  External Receivers Extension Type
    6.  Normative References
    Appendix A.  Change log
-     A.1.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
+     A.1.  Changes from draft-mahy-mls-semiprivatemessage-03 to -04
+     A.2.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
    Acknowledgments
    Author's Address
 
@@ -222,7 +223,7 @@ Table of Contents
    } SemiPrivateMessage;
 
    struct {
-       select (PrivateMessage.content_type) {
+       select (SemiPrivateMessage.content_type) {
            case proposal:
              Proposal proposal;
            case commit:
@@ -353,7 +354,11 @@ Table of Contents
 
 Appendix A.  Change log
 
-A.1.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
+A.1.  Changes from draft-mahy-mls-semiprivatemessage-03 to -04
+
+   *  corrected a typo in SemiPrivateMessageContent
+
+A.2.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
 
    *  do not attempt to decrypt SenderData for external receivers;
       instead also encrypt the sender_leaf_index and reuse_guard.
