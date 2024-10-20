@@ -176,7 +176,7 @@ struct {
 } SemiPrivateMessage;
 
 struct {
-    select (PrivateMessage.content_type) {
+    select (SemiPrivateMessage.content_type) {
         case proposal:
           Proposal proposal;
         case commit:
@@ -276,6 +276,10 @@ targeted in a SemiPrivateMessage.
 --- back
 
 # Change log
+
+## Changes from draft-mahy-mls-semiprivatemessage-03 to -04
+
+- corrected a typo in SemiPrivateMessageContent
 
 ## Changes from draft-mahy-mls-semiprivatemessage-02 to -03
 
