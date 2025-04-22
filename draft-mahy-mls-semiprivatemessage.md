@@ -43,8 +43,7 @@ rather than send these handshakes in a PublicMessage.
 # Introduction
 
 This document defines two extensions of MLS {{!RFC9420}}. The first is the
-`SemiPrivateMessage` wire format Safe Extension (see {{Section 2.1.7.1 of
-!I-D.ietf-mls-extensions}}, which allows an otherwise PrivateMessage
+`SemiPrivateMessage` wire format, which allows an otherwise PrivateMessage
 to be shared with a predefined list of external receivers. It is restricted
 for use only with commits or proposals. The second is the
 `external_receivers` GroupContext extension that contains the list of
@@ -79,10 +78,13 @@ struct {
 } ExternalReceiver;
 ~~~
 
-The `SemiPrivateMessage` wire format Safe Extension also has an
-extension type which is carried in the GroupContext `required_capabilities`
-to indicate use of the wire format in a group, and in the Capabilities of
-LeafNodes)
+The `mls_semiprivate_message` wire format is advertised in the
+`supported_wire_formats` list in `LeafNode.capabilities.extensions`,
+(defined in {{Section 5 of !I-D.ietf-mls-extensions}}).
+For SemiPrivateMessage to be used in a group, `mls_semiprivate_message` needs to
+be in the `required_wire_formats` list in the `GroupContext.extension_types` of
+that group, and there needs to be at least one entry in the `external_receivers`
+GroupContext extension.
 
 SemiPrivateMessage substantially reuses the construction of PrivateMessage,
 but like a Welcome message also contains information (`key_and_nonces`)
@@ -196,9 +198,19 @@ struct {
     opaque framed_content_tbs_hash<V>;
 } SemiPrivateContentAAD;
 
-/* IANA-registered value for semi_private_message */
-extension_type = TBD2
-SemiPrivateMessage extension_data;
+struct {
+    ProtocolVersion version = mls10;
+    WireFormat wire_format;
+    select (MLSMessage.wire_format) {
+        case mls_public_message:
+            PublicMessage public_message;
+        case mls_private_message:
+            PrivateMessage private_message;
+        ...
+        case mls_semiprivate_message_:
+            SemiPrivateMessage semiprivate_message;
+    };
+} MLSMessage;
 ~~~
 
 Encryption of the `ciphertext` uses the cipher suite's AEAD algorithm using
@@ -209,13 +221,11 @@ the `key`, `nonce` xored with the `reuse_guard`, the
 Encryption of the `encrypted_sender_data` proceeds in the
 same way for `SemiPrivateMessage` as for `PrivateMessage`.
 
-Finally, as a safe wire format extension, the `SemiPrivateMessage` is
-wrapped in an `ExtensionContent` struct.
 
 ## Decryption of SemiPrivateMessage as a member
 
-After stripping off the the `ExtensionContent` struct, a member
-receiver derives the `sender_data_key` and `sender_data_nonce` and decrypts the `encrypted_sender_data`, just as for a `PrivateMessage`.
+When receiving a `SemiPrivateMessage`, a member receiver derives the
+`sender_data_key` and `sender_data_nonce` and decrypts the `encrypted_sender_data`, just as for a `PrivateMessage`.
 
 The receiver uses the `SenderData` to lookup the `key` and `nonce` for
 the correct `generation` in the (non-blank) sender's handshake ratchet.
@@ -229,7 +239,7 @@ valid.
 
 ## Decryption of SemiPrivateMessage as an external receiver
 
-After stripping off the the `ExtensionContent` struct, an external receiver
+When receiving a `SemiPrivateMessage`, an external receiver
 looks in the `keys_for_external_receivers` field for its
 `external_receiver_ref`. It calculates the `semi_private_message_context`
 and uses HPKE to decrypt the `encrypted_keys_and_nonces`. Using the `nonce`
@@ -254,11 +264,8 @@ TODO More Security.
 
 ## SemiPrivateMessage Wire Format
 
-The `semi_private_message` MLS Extension Type is used to signal support
-for the `SemiPrivateMessage` Wire Format (a Safe Extension).
-
 - Value: TBD1 (to be assigned by IANA)
-- Name: semi_private_message
+- Name: mls_semiprivate_message
 - Recommended: Y
 - Reference: RFC XXXX
 
@@ -273,9 +280,21 @@ targeted in a SemiPrivateMessage.
 - Recommended: Y
 - Reference: RFC XXXX
 
+## SemiPrivateMessageReceiver Public Key Encryption Label
+
+- Label: "SemiPrivateMessageReceiver"
+- Recommended: Y
+- Reference: RFC XXXX
+
 --- back
 
 # Change log
+
+## Changes from draft-mahy-mls-semiprivatemesage-04 to -05
+
+- remove the "safe extension" wire format
+- use the supported/required_wire_formats extensions in mls-extensions
+- register SemiPrivateMessageReceiver Public Key Encryption Label
 
 ## Changes from draft-mahy-mls-semiprivatemessage-03 to -04
 
@@ -287,8 +306,3 @@ targeted in a SemiPrivateMessage.
 - make the `encrypted_key_and_nonces` context include the `group_id`, `epoch`, and a the hash of the `sender_leaf_index` and `nonce`. include that `partial_context_hash` in the AAD.
 - add a hash of the FramedContentTBS to the AAD to make sure the content encrypted to the external receiver is the same as that sent to members.
 - add explicit instructions about encryption and decryption.
-
-# Acknowledgments
-{:numbered="false"}
-
-TODO acknowledge.
