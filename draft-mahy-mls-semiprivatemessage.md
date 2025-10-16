@@ -290,7 +290,12 @@ targeted in a SemiPrivateMessage.
 
 # Change log
 
-## Changes from draft-mahy-mls-semiprivatemesage-04 to -05
+## Changes from draft-mahy-mls-semiprivatemessage-05 to -06
+
+- fix a typo in the change log
+- refresh almost expired document
+
+## Changes from draft-mahy-mls-semiprivatemessage-04 to -05
 
 - remove the "safe extension" wire format
 - use the supported/required_wire_formats extensions in mls-extensions
