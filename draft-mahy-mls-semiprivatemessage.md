@@ -269,12 +269,12 @@ TODO More Security.
 - Recommended: Y
 - Reference: RFC XXXX
 
-## External Receivers Extension Type
+## External Receivers MLS Component Type
 
 The `external_receivers` extension contains a list of external receivers
 targeted in a SemiPrivateMessage.
 
-- Value: TBD2 (to be assigned by IANA)
+- Value: TBD2 (suggested value 0x0008)
 - Name: external_receivers
 - Message(s): GC. This extension may appear in GroupContext objects.
 - Recommended: Y
