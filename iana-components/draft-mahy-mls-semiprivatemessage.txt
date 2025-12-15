@@ -4,8 +4,8 @@
 
 Messaging Layer Security                                         R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                           16 October 2025
-Expires: 19 April 2026
+Intended status: Informational                          15 December 2025
+Expires: 18 June 2026
 
 
   Semi-Private Messages in the Messaging Layer Security (MLS) Protocol
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 April 2026.
+   This Internet-Draft will expire on 18 June 2026.
 
 Copyright Notice
 
@@ -78,7 +78,7 @@ Table of Contents
    4.  Security Considerations
    5.  IANA Considerations
      5.1.  SemiPrivateMessage Wire Format
-     5.2.  External Receivers Extension Type
+     5.2.  External Receivers MLS Component Type
      5.3.  SemiPrivateMessageReceiver Public Key Encryption Label
    6.  Normative References
    Appendix A.  Change log
@@ -320,12 +320,12 @@ Table of Contents
 
    *  Reference: RFC XXXX
 
-5.2.  External Receivers Extension Type
+5.2.  External Receivers MLS Component Type
 
    The external_receivers extension contains a list of external
    receivers targeted in a SemiPrivateMessage.
 
-   *  Value: TBD2 (to be assigned by IANA)
+   *  Value: TBD2 (suggested value 0x0008)
 
    *  Name: external_receivers
 
