@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-12-14T01:20:43.419023+00:00",
+  "timestamp": "2025-12-16T01:16:34.735670+00:00",
   "repo": "rohanmahy/mls-semiprivatemessage",
   "labels": [
     {
@@ -50,5 +50,34 @@
     }
   ],
   "issues": [],
-  "pulls": []
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOMTHFl864-AtY",
+      "title": "Add component value",
+      "url": "https://github.com/rohanmahy/mls-semiprivatemessage/pull/1",
+      "state": "MERGED",
+      "author": "rohanmahy",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-12-15T16:46:27Z",
+      "updatedAt": "2025-12-15T16:47:17Z",
+      "baseRepository": "rohanmahy/mls-semiprivatemessage",
+      "baseRefName": "main",
+      "baseRefOid": "e07b717a35846d902324ba7266e33ce4b2fa598d",
+      "headRepository": "rohanmahy/mls-semiprivatemessage",
+      "headRefName": "iana-components",
+      "headRefOid": "bada4550ca5218e5ef9770115aa28de4731a987d",
+      "closedAt": "2025-12-15T16:47:17Z",
+      "mergedAt": "2025-12-15T16:47:17Z",
+      "mergedBy": "rohanmahy",
+      "mergeCommit": {
+        "oid": "f0c6d5362af22fd2345ad7b0b51f440d2dffb207"
+      },
+      "comments": [],
+      "reviews": []
+    }
+  ]
 }
