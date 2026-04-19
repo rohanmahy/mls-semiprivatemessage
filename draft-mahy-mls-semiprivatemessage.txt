@@ -4,8 +4,8 @@
 
 Messaging Layer Security                                         R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                          15 December 2025
-Expires: 18 June 2026
+Intended status: Informational                             19 April 2026
+Expires: 21 October 2026
 
 
   Semi-Private Messages in the Messaging Layer Security (MLS) Protocol
@@ -51,11 +51,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 18 June 2026.
+   This Internet-Draft will expire on 21 October 2026.
 
 Copyright Notice
 
-   Copyright (c) 2025 IETF Trust and the persons identified as the
+   Copyright (c) 2026 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -82,10 +82,11 @@ Table of Contents
      5.3.  SemiPrivateMessageReceiver Public Key Encryption Label
    6.  Normative References
    Appendix A.  Change log
-     A.1.  Changes from draft-mahy-mls-semiprivatemessage-05 to -06
-     A.2.  Changes from draft-mahy-mls-semiprivatemessage-04 to -05
-     A.3.  Changes from draft-mahy-mls-semiprivatemessage-03 to -04
-     A.4.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
+     A.1.  Changes from draft-mahy-mls-semiprivatemessage-06 to -07
+     A.2.  Changes from draft-mahy-mls-semiprivatemessage-05 to -06
+     A.3.  Changes from draft-mahy-mls-semiprivatemessage-04 to -05
+     A.4.  Changes from draft-mahy-mls-semiprivatemessage-03 to -04
+     A.5.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
    Author's Address
 
 1.  Introduction
@@ -349,9 +350,9 @@ Table of Contents
    [I-D.ietf-mls-extensions]
               Robert, R., "The Messaging Layer Security (MLS)
               Extensions", Work in Progress, Internet-Draft, draft-ietf-
-              mls-extensions-08, 21 July 2025,
+              mls-extensions-09, 2 March 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-mls-
-              extensions-08>.
+              extensions-09>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -369,13 +370,17 @@ Table of Contents
 
 Appendix A.  Change log
 
-A.1.  Changes from draft-mahy-mls-semiprivatemessage-05 to -06
+A.1.  Changes from draft-mahy-mls-semiprivatemessage-06 to -07
+
+   None
+
+A.2.  Changes from draft-mahy-mls-semiprivatemessage-05 to -06
 
    *  fix a typo in the change log
 
    *  refresh almost expired document
 
-A.2.  Changes from draft-mahy-mls-semiprivatemessage-04 to -05
+A.3.  Changes from draft-mahy-mls-semiprivatemessage-04 to -05
 
    *  remove the "safe extension" wire format
 
@@ -384,11 +389,11 @@ A.2.  Changes from draft-mahy-mls-semiprivatemessage-04 to -05
 
    *  register SemiPrivateMessageReceiver Public Key Encryption Label
 
-A.3.  Changes from draft-mahy-mls-semiprivatemessage-03 to -04
+A.4.  Changes from draft-mahy-mls-semiprivatemessage-03 to -04
 
    *  corrected a typo in SemiPrivateMessageContent
 
-A.4.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
+A.5.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
 
    *  do not attempt to decrypt SenderData for external receivers;
       instead also encrypt the sender_leaf_index and reuse_guard.
