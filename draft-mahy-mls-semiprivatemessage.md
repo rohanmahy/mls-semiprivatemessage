@@ -290,6 +290,10 @@ targeted in a SemiPrivateMessage.
 
 # Change log
 
+## Changes from draft-mahy-mls-semiprivatemessage-06 to -07
+
+None
+
 ## Changes from draft-mahy-mls-semiprivatemessage-05 to -06
 
 - fix a typo in the change log
