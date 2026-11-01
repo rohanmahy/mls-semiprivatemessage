@@ -264,7 +264,7 @@ TODO More Security.
 
 ## SemiPrivateMessage Wire Format
 
-- Value: TBD1 (to be assigned by IANA)
+- Value: TBD1 (suggested value 0x0011)
 - Name: mls_semiprivate_message
 - Recommended: Y
 - Reference: RFC XXXX
@@ -274,7 +274,7 @@ TODO More Security.
 The `external_receivers` extension contains a list of external receivers
 targeted in a SemiPrivateMessage.
 
-- Value: TBD2 (suggested value 0x0008)
+- Value: TBD2 (suggested value 0x0007)
 - Name: external_receivers
 - Message(s): GC. This extension may appear in GroupContext objects.
 - Recommended: Y
@@ -289,6 +289,10 @@ targeted in a SemiPrivateMessage.
 --- back
 
 # Change log
+
+## Changes from draft-mahy-mls-semiprivatemessage-07 to -08
+
+- updated suggested IANA values to prevent conflicts
 
 ## Changes from draft-mahy-mls-semiprivatemessage-06 to -07
 
