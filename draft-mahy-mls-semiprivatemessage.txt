@@ -4,8 +4,8 @@
 
 Messaging Layer Security                                         R. Mahy
 Internet-Draft                            Rohan Mahy Consulting Services
-Intended status: Informational                             19 April 2026
-Expires: 21 October 2026
+Intended status: Informational                           1 November 2026
+Expires: 5 May 2027
 
 
   Semi-Private Messages in the Messaging Layer Security (MLS) Protocol
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 21 October 2026.
+   This Internet-Draft will expire on 5 May 2027.
 
 Copyright Notice
 
@@ -82,11 +82,12 @@ Table of Contents
      5.3.  SemiPrivateMessageReceiver Public Key Encryption Label
    6.  Normative References
    Appendix A.  Change log
-     A.1.  Changes from draft-mahy-mls-semiprivatemessage-06 to -07
-     A.2.  Changes from draft-mahy-mls-semiprivatemessage-05 to -06
-     A.3.  Changes from draft-mahy-mls-semiprivatemessage-04 to -05
-     A.4.  Changes from draft-mahy-mls-semiprivatemessage-03 to -04
-     A.5.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
+     A.1.  Changes from draft-mahy-mls-semiprivatemessage-07 to -08
+     A.2.  Changes from draft-mahy-mls-semiprivatemessage-06 to -07
+     A.3.  Changes from draft-mahy-mls-semiprivatemessage-05 to -06
+     A.4.  Changes from draft-mahy-mls-semiprivatemessage-04 to -05
+     A.5.  Changes from draft-mahy-mls-semiprivatemessage-03 to -04
+     A.6.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
    Author's Address
 
 1.  Introduction
@@ -313,7 +314,7 @@ Table of Contents
 
 5.1.  SemiPrivateMessage Wire Format
 
-   *  Value: TBD1 (to be assigned by IANA)
+   *  Value: TBD1 (suggested value 0x0011)
 
    *  Name: mls_semiprivate_message
 
@@ -326,7 +327,7 @@ Table of Contents
    The external_receivers extension contains a list of external
    receivers targeted in a SemiPrivateMessage.
 
-   *  Value: TBD2 (suggested value 0x0008)
+   *  Value: TBD2 (suggested value 0x0007)
 
    *  Name: external_receivers
 
@@ -350,9 +351,9 @@ Table of Contents
    [I-D.ietf-mls-extensions]
               Robert, R., "The Messaging Layer Security (MLS)
               Extensions", Work in Progress, Internet-Draft, draft-ietf-
-              mls-extensions-09, 2 March 2026,
+              mls-extensions-10, 6 July 2026,
               <https://datatracker.ietf.org/doc/html/draft-ietf-mls-
-              extensions-09>.
+              extensions-10>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -370,17 +371,21 @@ Table of Contents
 
 Appendix A.  Change log
 
-A.1.  Changes from draft-mahy-mls-semiprivatemessage-06 to -07
+A.1.  Changes from draft-mahy-mls-semiprivatemessage-07 to -08
+
+   *  updated suggested IANA values to prevent conflicts
+
+A.2.  Changes from draft-mahy-mls-semiprivatemessage-06 to -07
 
    None
 
-A.2.  Changes from draft-mahy-mls-semiprivatemessage-05 to -06
+A.3.  Changes from draft-mahy-mls-semiprivatemessage-05 to -06
 
    *  fix a typo in the change log
 
    *  refresh almost expired document
 
-A.3.  Changes from draft-mahy-mls-semiprivatemessage-04 to -05
+A.4.  Changes from draft-mahy-mls-semiprivatemessage-04 to -05
 
    *  remove the "safe extension" wire format
 
@@ -389,11 +394,11 @@ A.3.  Changes from draft-mahy-mls-semiprivatemessage-04 to -05
 
    *  register SemiPrivateMessageReceiver Public Key Encryption Label
 
-A.4.  Changes from draft-mahy-mls-semiprivatemessage-03 to -04
+A.5.  Changes from draft-mahy-mls-semiprivatemessage-03 to -04
 
    *  corrected a typo in SemiPrivateMessageContent
 
-A.5.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
+A.6.  Changes from draft-mahy-mls-semiprivatemessage-02 to -03
 
    *  do not attempt to decrypt SenderData for external receivers;
       instead also encrypt the sender_leaf_index and reuse_guard.
